@@ -12,6 +12,7 @@
     "ghc-filesystem",
     "infoware",
     "openxr-loader",
+    "bullet3",
     "lua",
     "tracy",
     "bg-ers-iosubsystem"
