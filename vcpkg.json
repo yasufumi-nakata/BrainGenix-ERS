@@ -11,10 +11,9 @@
     "platform-folders",
     "ghc-filesystem",
     "infoware",
+    "openxr-loader",
     "lua",
     "tracy",
-
     "bg-ers-iosubsystem"
-
   ]
 }
