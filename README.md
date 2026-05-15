@@ -193,6 +193,18 @@ Depending on the type of object selected, the window will display different prop
 
   This currently wraps the existing root project through CMake `ExternalProject` and is meant as scaffolding for the larger build-system refactor, not as the only supported build path.
 
+## macOS:
+
+  macOS is not yet a primary development target, but there is now a first-pass setup helper for local native builds on the GitHub mirror path.
+
+  Install Homebrew first, then enter the `Tools` directory and run `bash SetupMacOS.sh` followed by `bash Build.sh [number_of_threads] [build_type]`.
+
+  Example:
+  `bash SetupMacOS.sh`
+  `bash Build.sh 4 Release`
+
+  This path is currently intended as an early portability/build-validation slice rather than a fully supported shipping workflow.
+
 
 ## Windows:
 
