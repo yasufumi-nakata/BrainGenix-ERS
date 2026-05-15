@@ -4,31 +4,24 @@
 
 
 # Create Library (Name Should Be Parent Dir Name)
-add_library(ERS_SceneManager
+add_library(ERS_STRUCT_AudioSource
 
             # Add Source Files (.cpp)
-            "SceneManager.cpp"
+            "AudioSource.cpp"
 
             # Add Header Files (.h)
-            "SceneManager.h"
-            
+            "AudioSource.h"
+
             ${BACKWARD_ENABLE}
             )
 
 # Link 3rd Party Libs
-target_link_libraries(ERS_SceneManager
+target_link_libraries(ERS_STRUCT_AudioSource
     glm
     )
 
 # Link Internal Libs
-target_link_libraries(ERS_SceneManager
-    bg-common-logger
-
-    ERS_STRUCT_Shader
-    ERS_STRUCT_Scene
-    ERS_STRUCT_AudioSource
-    ERS_STRUCT_LocRotScale
-    ERS_STRUCT_OpenGLDefaults  
+target_link_libraries(ERS_STRUCT_AudioSource
     )
 
-target_include_directories(ERS_SceneManager PUBLIC ./)
+target_include_directories(ERS_STRUCT_AudioSource PUBLIC ./)

@@ -24,6 +24,9 @@ std::string ERS_FUNCTION_GetSceneObjectTypeName(ERS_ENUM_SceneObjectType Type) {
         case ERS_ENUM_SceneObjectType::SceneCamera:
             return std::string("SceneCamera");
 
+        case ERS_ENUM_SceneObjectType::AudioSource:
+            return std::string("AudioSource");
+
         case ERS_ENUM_SceneObjectType::Unknown:
         default:
             return std::string("Unknown");
@@ -51,6 +54,10 @@ ERS_ENUM_SceneObjectType ERS_FUNCTION_GetSceneObjectTypeFromName(const std::stri
 
     if (Type == std::string("SceneCamera")) {
         return ERS_ENUM_SceneObjectType::SceneCamera;
+    }
+
+    if (Type == std::string("AudioSource")) {
+        return ERS_ENUM_SceneObjectType::AudioSource;
     }
 
     return ERS_ENUM_SceneObjectType::Unknown;

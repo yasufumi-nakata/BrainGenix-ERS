@@ -111,6 +111,14 @@ bool ERS_CLASS_SceneManager::GetLocRotScale(int SceneIndex, unsigned long SceneO
         Pos = Scene->SceneCameras[Index]->Pos_;
         Rot = Scene->SceneCameras[Index]->Rot_;
         HasRotation = true;
+    } else if (SelectedObject.Type_ == "AudioSource") {
+        unsigned long Index = SelectedObject.Index_;
+        if (Index >= Scene->AudioSources.size()) {
+            return false;
+        }
+        Pos = Scene->AudioSources[Index]->Pos;
+        Rot = Scene->AudioSources[Index]->Rot;
+        HasRotation = true;
     } else {
         return false;
     }
@@ -172,6 +180,13 @@ bool ERS_CLASS_SceneManager::ApplyLocRotScale(int SceneIndex, unsigned long Scen
         }
         Scene->SceneCameras[Index]->Pos_ = Pos;
         Scene->SceneCameras[Index]->Rot_ = Rot;
+    } else if (SelectedObject.Type_ == "AudioSource") {
+        unsigned long Index = SelectedObject.Index_;
+        if (Index >= Scene->AudioSources.size()) {
+            return false;
+        }
+        Scene->AudioSources[Index]->Pos = Pos;
+        Scene->AudioSources[Index]->Rot = Rot;
     } else {
         return false;
     }

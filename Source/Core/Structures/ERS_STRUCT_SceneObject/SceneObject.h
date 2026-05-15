@@ -24,7 +24,8 @@ enum class ERS_ENUM_SceneObjectType : std::uint8_t {
     SpotLight,
     DirectionalLight,
     PointLight,
-    SceneCamera
+    SceneCamera,
+    AudioSource
 };
 
 

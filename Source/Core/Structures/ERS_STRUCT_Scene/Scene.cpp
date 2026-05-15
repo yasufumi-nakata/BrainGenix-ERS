@@ -45,6 +45,11 @@ void ERS_STRUCT_Scene::IndexSceneObjects() {
     for (unsigned long i = 0; i < SceneCameras.size(); i++) {
         SceneObjects_.push_back(ERS_FUNCTION_CreateSceneObject(ERS_ENUM_SceneObjectType::SceneCamera, i, std::string("[C] ") + SceneCameras[i]->UserDefinedName_));
     }
+
+    // Add Audio Sources
+    for (unsigned long i = 0; i < AudioSources.size(); i++) {
+        SceneObjects_.push_back(ERS_FUNCTION_CreateSceneObject(ERS_ENUM_SceneObjectType::AudioSource, i, std::string("[A] ") + AudioSources[i]->UserDefinedName));
+    }
     
 
 }
