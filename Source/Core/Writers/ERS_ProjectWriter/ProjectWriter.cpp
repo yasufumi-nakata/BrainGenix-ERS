@@ -66,6 +66,34 @@ void ERS_FUNCTION_EmitControllerSettings(YAML::Emitter* Emitter, ERS_STRUCT_Cont
 
 }
 
+void EmitRendererSettings(YAML::Emitter& ProjectEmitter, const ERS_STRUCT_RendererSettings& RendererSettings) {
+
+    ProjectEmitter<<YAML::Key<<"RendererSettings"<<YAML::Value<<YAML::BeginMap;
+    ProjectEmitter<<YAML::Key<<"ShadowMapX"<<YAML::Value<<RendererSettings.ShadowMapX_;
+    ProjectEmitter<<YAML::Key<<"ShadowMapY"<<YAML::Value<<RendererSettings.ShadowMapY_;
+    ProjectEmitter<<YAML::Key<<"ShadowFilteringType"<<YAML::Value<<static_cast<int>(RendererSettings.ShadowFilteringType_);
+    ProjectEmitter<<YAML::Key<<"ShadowUpdateMode"<<YAML::Value<<static_cast<int>(RendererSettings.ShadowUpdateMode_);
+    ProjectEmitter<<YAML::Key<<"MaxShadowUpdatesPerFrame"<<YAML::Value<<RendererSettings.MaxShadowUpdatesPerFrame_;
+    ProjectEmitter<<YAML::Key<<"ShadowFilterKernelSize"<<YAML::Value<<RendererSettings.ShadowFilterKernelSize_;
+    ProjectEmitter<<YAML::Key<<"RefreshStaticShadowMaps"<<YAML::Value<<RendererSettings.RefreshStaticShadowMaps_;
+    ProjectEmitter<<YAML::Key<<"MotionBlurEnabled"<<YAML::Value<<RendererSettings.MotionBlurEnabled_;
+    ProjectEmitter<<YAML::Key<<"MotionBlurStrength"<<YAML::Value<<RendererSettings.MotionBlurStrength_;
+    ProjectEmitter<<YAML::Key<<"MotionBlurReferenceFrameRate"<<YAML::Value<<RendererSettings.MotionBlurReferenceFrameRate_;
+    ProjectEmitter<<YAML::Key<<"MotionBlurMaxBlend"<<YAML::Value<<RendererSettings.MotionBlurMaxBlend_;
+    ProjectEmitter<<YAML::Key<<"VRAMBudget"<<YAML::Value<<RendererSettings.VRAMBudget_;
+    ProjectEmitter<<YAML::Key<<"RAMBudget"<<YAML::Value<<RendererSettings.RAMBudget_;
+    ProjectEmitter<<YAML::Key<<"WarningLowRAMBytes"<<YAML::Value<<RendererSettings.WarningLowRAMBytes;
+    ProjectEmitter<<YAML::Key<<"CriticalLowRAMBytes"<<YAML::Value<<RendererSettings.CriticalLowRAMBytes;
+    ProjectEmitter<<YAML::Key<<"FatalLowRAMBytes"<<YAML::Value<<RendererSettings.FatalLowRAMBytes;
+    ProjectEmitter<<YAML::Key<<"TerminateLowRAMBytes"<<YAML::Value<<RendererSettings.TerminateLowRAMBytes;
+    ProjectEmitter<<YAML::Key<<"WarningLowVRAMBytes"<<YAML::Value<<RendererSettings.WarningLowVRAMBytes;
+    ProjectEmitter<<YAML::Key<<"CriticalLowVRAMBytes"<<YAML::Value<<RendererSettings.CriticalLowVRAMBytes;
+    ProjectEmitter<<YAML::Key<<"FatalLowVRAMBytes"<<YAML::Value<<RendererSettings.FatalLowVRAMBytes;
+    ProjectEmitter<<YAML::Key<<"TerminateLowVRAMBytes"<<YAML::Value<<RendererSettings.TerminateLowVRAMBytes;
+    ProjectEmitter<<YAML::EndMap;
+
+}
+
 }
 
 
@@ -113,6 +141,11 @@ bool ERS_CLASS_ProjectWriter::SaveProject(ERS_STRUCT_Project* ProjectPointer, lo
     ProjectEmitter<<YAML::Key<<"ProjectLicense"<<YAML::Value<<ProjectPointer->ProjectLicense;
     ProjectEmitter<<YAML::Key<<"IsLicenseProprietary"<<YAML::Value<<ProjectPointer->IsLicenseProprietary;
     ProjectEmitter<<YAML::Key<<"PlayOnLoad"<<YAML::Value<<ProjectPointer->StartPlayingOnLoad;
+
+    if (SystemUtils_->RendererSettings_ != nullptr) {
+        ProjectPointer->RendererSettings = *SystemUtils_->RendererSettings_;
+    }
+    EmitRendererSettings(ProjectEmitter, ProjectPointer->RendererSettings);
 
 
     ProjectEmitter<<YAML::Key<<"SceneIDs";
