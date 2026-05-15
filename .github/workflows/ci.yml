@@ -56,6 +56,32 @@ jobs:
             Build/
             Binaries/
 
+  build-macos13:
+    name: Build (macOS 13)
+    runs-on: macos-13
+    timeout-minutes: 120
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        working-directory: Tools
+        run: bash SetupMacOS.sh
+
+      - name: Build ERS
+        working-directory: Tools
+        run: bash Build.sh 2 Release
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: BrainGenix-ERS-macos13
+          path: |
+            Build/
+            Binaries/
+
   doxygen:
     name: Doxygen
     runs-on: ubuntu-22.04
