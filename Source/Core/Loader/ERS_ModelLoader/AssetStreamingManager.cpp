@@ -232,8 +232,6 @@ void ERS_CLASS_AssetStreamingManager::CheckHardwareLimitations(ERS_STRUCT_Scene*
 
 }
 
-// todo: create function to go through textures with high levels and unload them if under a certain ram/vram threshold
-
 std::vector<ERS_STRUCT_Model*> ERS_CLASS_AssetStreamingManager::CreateListOfModelsToLoadNextLevelToVRAM(std::map<unsigned int, int> CameraUpdatesQuota, ERS_STRUCT_Scene* Scene, std::vector<std::map<float, unsigned int>> DistancesFromCamera) {
 
     // Create Vector Containing Models Which Should Be Pushed into RAM if possible
