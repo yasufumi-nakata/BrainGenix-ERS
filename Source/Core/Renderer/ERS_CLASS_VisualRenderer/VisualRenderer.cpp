@@ -411,12 +411,16 @@ void ERS_CLASS_VisualRenderer::UpdateViewports(float DeltaTime, ERS_CLASS_SceneM
 
     // Handle editor/play camera transitions before play mode overwrites viewport 0.
     ERS_STRUCT_Scene* Scene = ProjectUtils_->SceneManager_->Scenes_[ProjectUtils_->SceneManager_->ActiveScene_].get();
-    if (LastEditorMode_ && !IsEditorMode_) {
+    bool WasEditorMode = LastEditorMode_;
+    bool EnteringPlayMode = WasEditorMode && !IsEditorMode_;
+    bool LeavingPlayModeAtFrameStart = !WasEditorMode && IsEditorMode_;
+    bool RestoredEditorCameraState = false;
+    if (EnteringPlayMode) {
         StoreEditorViewportCameraState();
-    } else if (!LastEditorMode_ && IsEditorMode_) {
+    } else if (LeavingPlayModeAtFrameStart) {
         RestoreEditorViewportCameraState();
+        RestoredEditorCameraState = true;
     }
-    LastEditorMode_ = IsEditorMode_;
 
     // Apply Scene Camera Transforms
     if (!IsEditorMode_ && Scene->ActiveSceneCameraIndex != -1 && !Viewports_.empty()) {
@@ -652,8 +656,9 @@ void ERS_CLASS_VisualRenderer::UpdateViewports(float DeltaTime, ERS_CLASS_SceneM
 
     }
 
+    bool ExitingPlayMode = (!WasEditorMode && IsEditorMode_) || (EnteringPlayMode && IsEditorMode_);
     if (AudioPlaybackSystem_ != nullptr) {
-        if (LastEditorMode_ && !IsEditorMode_) {
+        if (EnteringPlayMode) {
             AudioPlaybackSystem_->StartScenePlayback(Scene);
         }
 
@@ -661,12 +666,15 @@ void ERS_CLASS_VisualRenderer::UpdateViewports(float DeltaTime, ERS_CLASS_SceneM
             AudioPlaybackSystem_->Update(Scene, Viewports_[0]->Camera.get());
         }
 
-        if (!LastEditorMode_ && IsEditorMode_) {
+        if (ExitingPlayMode) {
             AudioPlaybackSystem_->StopScenePlayback();
         }
-
-        LastEditorMode_ = IsEditorMode_;
     }
+
+    if (ExitingPlayMode && !RestoredEditorCameraState) {
+        RestoreEditorViewportCameraState();
+    }
+    LastEditorMode_ = IsEditorMode_;
 
     // Reset Selected Script
     SelectedScript_ = -1;
