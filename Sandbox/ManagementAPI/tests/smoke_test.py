@@ -69,6 +69,28 @@ def main() -> int:
             method="POST",
             body={"reason": "smoke-test"},
         )
+        server_render_start = _request(
+            f"{base}/v1/rendering/server/start",
+            method="POST",
+            body={"contextAPI": "EGL", "frameTransport": "sandbox", "width": 640, "height": 360},
+        )
+        server_render_status = _request(f"{base}/v1/rendering/server/status")
+        server_render_stop = _request(
+            f"{base}/v1/rendering/server/stop",
+            method="POST",
+            body={"reason": "smoke-test"},
+        )
+        datacenter_load_start = _request(
+            f"{base}/v1/datacenter-loading/start",
+            method="POST",
+            body={"source": "cassandra", "dataset": "sandbox-scene"},
+        )
+        datacenter_load_status = _request(f"{base}/v1/datacenter-loading/status")
+        datacenter_load_cancel = _request(
+            f"{base}/v1/datacenter-loading/cancel",
+            method="POST",
+            body={"reason": "smoke-test"},
+        )
         export = _request(
             f"{base}/v1/projects/export",
             method="POST",
@@ -77,10 +99,18 @@ def main() -> int:
 
         assert runtime["application"] == "BrainGenix-ERS"
         assert "runtime-summary" in runtime["features"]
+        assert "server-rendering-jobs" in runtime["features"]
+        assert "datacenter-loading-jobs" in runtime["features"]
         assert project["name"] == "Example Project"
         assert scene["counts"]["models"] >= 0
         assert len(logs["items"]) >= 1
         assert refresh["status"] == "accepted"
+        assert server_render_start["serverRendering"]["status"] == "running"
+        assert server_render_status["serverRendering"]["width"] == 640
+        assert server_render_stop["serverRendering"]["status"] == "stopped"
+        assert datacenter_load_start["datacenterLoading"]["status"] == "running"
+        assert datacenter_load_status["datacenterLoading"]["dataset"] == "sandbox-scene"
+        assert datacenter_load_cancel["datacenterLoading"]["status"] == "cancelled"
         assert export["status"] == "accepted"
         return 0
     finally:

@@ -26,6 +26,12 @@ This is not wired into the C++ runtime yet. It is a sandbox seam and contract, n
 - `GET /v1/scenes/current/summary`
 - `GET /v1/logs/opengl`
 - `POST /v1/rendering/shadow-maps/refresh`
+- `GET /v1/rendering/server/status`
+- `POST /v1/rendering/server/start`
+- `POST /v1/rendering/server/stop`
+- `GET /v1/datacenter-loading/status`
+- `POST /v1/datacenter-loading/start`
+- `POST /v1/datacenter-loading/cancel`
 - `POST /v1/projects/export`
 
 ## Local Usage
@@ -46,5 +52,5 @@ python3 Sandbox/ManagementAPI/tests/smoke_test.py
 
 - no integration with the ERS C++ runtime or editor process yet
 - no authentication, authorization, or TLS yet
-- no persistent job store or cluster-management behavior yet
+- no persistent job store or cluster-management behavior yet; server-rendering and datacenter-loading jobs are in-memory sandbox state
 - no Kafka-backed transport or management-log pipeline yet

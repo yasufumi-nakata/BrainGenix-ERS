@@ -42,6 +42,42 @@ paths:
       responses:
         '202':
           description: Refresh action accepted.
+  /v1/rendering/server/status:
+    get:
+      summary: Return the current server-rendering job state.
+      responses:
+        '200':
+          description: Server-rendering state returned.
+  /v1/rendering/server/start:
+    post:
+      summary: Start a sandbox server-rendering job.
+      responses:
+        '202':
+          description: Server-rendering job accepted.
+  /v1/rendering/server/stop:
+    post:
+      summary: Stop the current sandbox server-rendering job.
+      responses:
+        '202':
+          description: Server-rendering stop accepted.
+  /v1/datacenter-loading/status:
+    get:
+      summary: Return the current datacenter-loading job state.
+      responses:
+        '200':
+          description: Datacenter-loading state returned.
+  /v1/datacenter-loading/start:
+    post:
+      summary: Start a sandbox datacenter-loading job.
+      responses:
+        '202':
+          description: Datacenter-loading job accepted.
+  /v1/datacenter-loading/cancel:
+    post:
+      summary: Cancel the current sandbox datacenter-loading job.
+      responses:
+        '202':
+          description: Datacenter-loading cancellation accepted.
   /v1/projects/export:
     post:
       summary: Request a project export operation.

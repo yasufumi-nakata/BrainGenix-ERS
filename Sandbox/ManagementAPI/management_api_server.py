@@ -6,6 +6,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import threading
 from datetime import datetime, timezone
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import Any
@@ -25,6 +26,8 @@ RUNTIME_INFO = {
         "opengl-log-readback",
         "shadow-refresh-action",
         "project-export-action",
+        "server-rendering-jobs",
+        "datacenter-loading-jobs",
     ],
 }
 PROJECT_SUMMARY = {
@@ -62,6 +65,26 @@ OPENGL_LOG_ITEMS = {
         },
     ]
 }
+STATE_LOCK = threading.Lock()
+SERVER_RENDERING_JOB: dict[str, Any] = {
+    "jobId": None,
+    "status": "idle",
+    "contextAPI": "EGL",
+    "frameTransport": "not-configured",
+    "width": 1920,
+    "height": 1080,
+    "startedAt": None,
+    "stoppedAt": None,
+}
+DATACENTER_LOADING_JOB: dict[str, Any] = {
+    "jobId": None,
+    "status": "idle",
+    "source": "cassandra",
+    "dataset": None,
+    "startedAt": None,
+    "completedAt": None,
+    "cancelledAt": None,
+}
 
 
 def _now_iso() -> str:
@@ -74,6 +97,10 @@ def _accepted_action(action_name: str) -> dict[str, str]:
         "status": "accepted",
         "acceptedAt": _now_iso(),
     }
+
+
+def _job_id(prefix: str) -> str:
+    return f"{prefix}-{uuid4()}"
 
 
 class ManagementAPIHandler(BaseHTTPRequestHandler):
@@ -115,13 +142,19 @@ class ManagementAPIHandler(BaseHTTPRequestHandler):
             self._write_json(200, SCENE_SUMMARY)
         elif path == "/v1/logs/opengl":
             self._write_json(200, OPENGL_LOG_ITEMS)
+        elif path == "/v1/rendering/server/status":
+            with STATE_LOCK:
+                self._write_json(200, {"serverRendering": dict(SERVER_RENDERING_JOB)})
+        elif path == "/v1/datacenter-loading/status":
+            with STATE_LOCK:
+                self._write_json(200, {"datacenterLoading": dict(DATACENTER_LOADING_JOB)})
         else:
             self._not_found()
 
     def do_POST(self) -> None:  # noqa: N802
         path = urlparse(self.path).path
         try:
-            self._read_json_body()
+            body = self._read_json_body()
         except json.JSONDecodeError:
             self._write_json(400, {"error": "invalid_json", "path": path})
             return
@@ -130,6 +163,45 @@ class ManagementAPIHandler(BaseHTTPRequestHandler):
             self._write_json(202, _accepted_action("shadow-refresh"))
         elif path == "/v1/projects/export":
             self._write_json(202, _accepted_action("project-export"))
+        elif path == "/v1/rendering/server/start":
+            with STATE_LOCK:
+                SERVER_RENDERING_JOB.update(
+                    {
+                        "jobId": _job_id("server-render"),
+                        "status": "running",
+                        "contextAPI": body.get("contextAPI", SERVER_RENDERING_JOB["contextAPI"]),
+                        "frameTransport": body.get("frameTransport", SERVER_RENDERING_JOB["frameTransport"]),
+                        "width": int(body.get("width", SERVER_RENDERING_JOB["width"])),
+                        "height": int(body.get("height", SERVER_RENDERING_JOB["height"])),
+                        "startedAt": _now_iso(),
+                        "stoppedAt": None,
+                    }
+                )
+                self._write_json(202, {"serverRendering": dict(SERVER_RENDERING_JOB)})
+        elif path == "/v1/rendering/server/stop":
+            with STATE_LOCK:
+                SERVER_RENDERING_JOB["status"] = "stopped"
+                SERVER_RENDERING_JOB["stoppedAt"] = _now_iso()
+                self._write_json(202, {"serverRendering": dict(SERVER_RENDERING_JOB)})
+        elif path == "/v1/datacenter-loading/start":
+            with STATE_LOCK:
+                DATACENTER_LOADING_JOB.update(
+                    {
+                        "jobId": _job_id("datacenter-load"),
+                        "status": "running",
+                        "source": body.get("source", DATACENTER_LOADING_JOB["source"]),
+                        "dataset": body.get("dataset", DATACENTER_LOADING_JOB["dataset"]),
+                        "startedAt": _now_iso(),
+                        "completedAt": None,
+                        "cancelledAt": None,
+                    }
+                )
+                self._write_json(202, {"datacenterLoading": dict(DATACENTER_LOADING_JOB)})
+        elif path == "/v1/datacenter-loading/cancel":
+            with STATE_LOCK:
+                DATACENTER_LOADING_JOB["status"] = "cancelled"
+                DATACENTER_LOADING_JOB["cancelledAt"] = _now_iso()
+                self._write_json(202, {"datacenterLoading": dict(DATACENTER_LOADING_JOB)})
         else:
             self._not_found()
 
