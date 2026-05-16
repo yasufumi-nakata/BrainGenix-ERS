@@ -47,6 +47,22 @@ To run the sample inserts and queries afterward:
 SOURCE '/workspace/queries/01_smoke_test.cql';
 ```
 
+## Run The Smoke Test
+
+From this directory:
+
+```bash
+bash run_smoke_test.sh
+```
+
+The runner starts the compose service, waits for `cqlsh` readiness, loads the schema, and runs the smoke query file. It exits nonzero if Cassandra never becomes ready or any CQL file fails.
+
+By default, the container and volume are left running for inspection. To remove them after the run:
+
+```bash
+bash run_smoke_test.sh --cleanup
+```
+
 ## Reset
 
 ```bash
