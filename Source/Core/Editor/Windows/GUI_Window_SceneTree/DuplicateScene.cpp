@@ -3,6 +3,8 @@
 //======================================================================//
 
 #include <DuplicateScene.h>
+#include <ProjectUtils.h>
+#include <SystemUtils.h>
 
 
 void GUI_Windowutil_DuplicateScene(ERS_CLASS_SceneManager* SceneManager, ERS_STRUCT_SystemUtils* SystemUtils, ERS_STRUCT_ProjectUtils* ProjectUtils, int SceneIndex) {
@@ -10,7 +12,7 @@ void GUI_Windowutil_DuplicateScene(ERS_CLASS_SceneManager* SceneManager, ERS_STR
     // Get Current Scene
     ERS_STRUCT_Scene NewScene = *SceneManager->Scenes_[SceneIndex].get();
 
-    // Update Name
+    // Update Metadata
     std::string CurrentName = NewScene.SceneName;
     std::string NewName = CurrentName + std::string(" - Copy");
     NewScene.SceneName = NewName;

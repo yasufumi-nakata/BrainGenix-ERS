@@ -17,6 +17,9 @@
 #include <SystemUtils.h>
 #include <ProjectUtils.h>
 
+struct ERS_STRUCT_ProjectUtils;
+struct ERS_STRUCT_SystemUtils;
+
 /**
  * @brief Duplicate the scene in the project
  * 
